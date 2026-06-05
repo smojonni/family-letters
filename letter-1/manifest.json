@@ -1,6 +1,6 @@
 {
   "@context": "http://iiif.io/api/presentation/3/context.json",
-  "id": "https://test-letter-1.netlify.app/manifest.json",
+  "id": "https://smojonni.github.io/family-letters/letter-1/manifest.json",
   "type": "Manifest",
   "label": {
     "en": [
@@ -9,7 +9,7 @@
   },
   "items": [
     {
-      "id": "https://test-letter-1.netlify.app/canvas/p1",
+      "id": "https://smojonni.github.io/family-letters/letter-1/canvas/p1",
       "type": "Canvas",
       "width": 2600,
       "height": 9210,
@@ -20,23 +20,23 @@
       },
       "items": [
         {
-          "id": "https://test-letter-1.netlify.app/page/p1",
+          "id": "https://smojonni.github.io/family-letters/letter-1/page/p1",
           "type": "AnnotationPage",
           "items": [
             {
-              "id": "https://test-letter-1.netlify.app/annotation/p1-image",
+              "id": "https://smojonni.github.io/family-letters/letter-1/annotation/p1-image",
               "type": "Annotation",
               "motivation": "painting",
-              "target": "https://test-letter-1.netlify.app/canvas/p1",
+              "target": "https://smojonni.github.io/family-letters/letter-1/canvas/p1",
               "body": {
-                "id": "https://test-letter-1.netlify.app/full/max/0/default.jpg",
+                "id": "https://smojonni.github.io/family-letters/letter-1/full/max/0/default.jpg",
                 "type": "Image",
                 "format": "image/jpeg",
                 "width": 2600,
                 "height": 9210,
                 "service": [
                   {
-                    "id": "https://test-letter-1.netlify.app",
+                    "id": "https://smojonni.github.io/family-letters/letter-1",
                     "type": "ImageService2",
                     "profile": "http://iiif.io/api/image/2/level0.json"
                   }

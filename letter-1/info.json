@@ -1,6 +1,6 @@
 {
   "@context": "http://iiif.io/api/image/2/context.json",
-  "@id": "https://test-letter-1.netlify.app",
+  "@id": "https://smojonni.github.io/family-letters/letter-1",
   "protocol": "http://iiif.io/api/image",
   "width": 2600,
   "height": 9210,

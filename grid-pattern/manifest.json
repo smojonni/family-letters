@@ -1,0 +1,51 @@
+{
+  "@context": "http://iiif.io/api/presentation/3/context.json",
+  "id": "https://test-grid-pattern.netlify.app/manifest.json",
+  "type": "Manifest",
+  "label": {
+    "en": [
+      "Grid Pattern"
+    ]
+  },
+  "items": [
+    {
+      "id": "https://test-grid-pattern.netlify.app/canvas/p1",
+      "type": "Canvas",
+      "width": 4000,
+      "height": 3000,
+      "label": {
+        "en": [
+          "Page 1"
+        ]
+      },
+      "items": [
+        {
+          "id": "https://test-grid-pattern.netlify.app/page/p1",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://test-grid-pattern.netlify.app/annotation/p1-image",
+              "type": "Annotation",
+              "motivation": "painting",
+              "target": "https://test-grid-pattern.netlify.app/canvas/p1",
+              "body": {
+                "id": "https://test-grid-pattern.netlify.app/full/max/0/default.jpg",
+                "type": "Image",
+                "format": "image/jpeg",
+                "width": 4000,
+                "height": 3000,
+                "service": [
+                  {
+                    "id": "https://test-grid-pattern.netlify.app",
+                    "type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level0.json"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

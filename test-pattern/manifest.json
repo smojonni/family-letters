@@ -1,0 +1,51 @@
+{
+  "@context": "http://iiif.io/api/presentation/3/context.json",
+  "id": "https://my-test-pattern.netlify.app/manifest.json",
+  "type": "Manifest",
+  "label": {
+    "en": [
+      "Test Pattern"
+    ]
+  },
+  "items": [
+    {
+      "id": "https://my-test-pattern.netlify.app/canvas/p1",
+      "type": "Canvas",
+      "width": 4000,
+      "height": 3000,
+      "label": {
+        "en": [
+          "Page 1"
+        ]
+      },
+      "items": [
+        {
+          "id": "https://my-test-pattern.netlify.app/page/p1",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://my-test-pattern.netlify.app/annotation/p1-image",
+              "type": "Annotation",
+              "motivation": "painting",
+              "target": "https://my-test-pattern.netlify.app/canvas/p1",
+              "body": {
+                "id": "https://my-test-pattern.netlify.app/full/max/0/default.jpg",
+                "type": "Image",
+                "format": "image/jpeg",
+                "width": 4000,
+                "height": 3000,
+                "service": [
+                  {
+                    "id": "https://my-test-pattern.netlify.app",
+                    "type": "ImageService3",
+                    "profile": "level0"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

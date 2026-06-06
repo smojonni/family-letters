@@ -1,46 +1,37 @@
 {
-  "@context": "http://iiif.io/api/presentation/3/context.json",
-  "id": "https://smojonni.github.io/family-letters/letter-1/manifest.json",
-  "type": "Manifest",
-  "label": {
-    "en": [
-      "Letter 1"
-    ]
-  },
-  "items": [
+  "@context": "http://iiif.io/api/presentation/2/context.json",
+  "@id": "https://smojonni.github.io/family-letters/letter-1/manifest.json",
+  "@type": "sc:Manifest",
+  "label": "Letter 1",
+  "sequences": [
     {
-      "id": "https://smojonni.github.io/family-letters/letter-1/canvas/p1",
-      "type": "Canvas",
-      "width": 2600,
-      "height": 9210,
-      "label": {
-        "en": [
-          "Page 1"
-        ]
-      },
-      "items": [
+      "@id": "https://smojonni.github.io/family-letters/letter-1/sequence/normal",
+      "@type": "sc:Sequence",
+      "label": "Current Page Order",
+      "canvases": [
         {
-          "id": "https://smojonni.github.io/family-letters/letter-1/page/p1",
-          "type": "AnnotationPage",
-          "items": [
+          "@id": "https://smojonni.github.io/family-letters/letter-1/canvas/p1",
+          "@type": "sc:Canvas",
+          "label": "Page 1",
+          "width": 2600,
+          "height": 9210,
+          "images": [
             {
-              "id": "https://smojonni.github.io/family-letters/letter-1/annotation/p1-image",
-              "type": "Annotation",
-              "motivation": "painting",
-              "target": "https://smojonni.github.io/family-letters/letter-1/canvas/p1",
-              "body": {
-                "id": "https://smojonni.github.io/family-letters/letter-1/full/max/0/default.jpg",
-                "type": "Image",
+              "@id": "https://smojonni.github.io/family-letters/letter-1/annotation/p1-image",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://smojonni.github.io/family-letters/letter-1/canvas/p1",
+              "resource": {
+                "@id": "https://smojonni.github.io/family-letters/letter-1/full/max/0/default.jpg",
+                "@type": "dctypes:Image",
                 "format": "image/jpeg",
                 "width": 2600,
                 "height": 9210,
-                "service": [
-                  {
-                    "id": "https://smojonni.github.io/family-letters/letter-1",
-                    "type": "ImageService2",
-                    "profile": "http://iiif.io/api/image/2/level0.json"
-                  }
-                ]
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://smojonni.github.io/family-letters/letter-1",
+                  "profile": "http://iiif.io/api/image/2/level0.json"
+                }
               }
             }
           ]

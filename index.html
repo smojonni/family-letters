@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Battani Family Letters - Historical Archives</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <!-- OpenSeadragon CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
+  
+  <style>
+    :root {
+      --bg-primary: #faf8f5; /* warm cream */
+      --bg-secondary: #f4edd7; /* soft parchment */
+      --text-primary: #2c2520; /* deep charcoal-brown */
+      --text-secondary: #6e6356; /* muted brown */
+      --accent: #b37e22; /* warm golden ochre */
+      --accent-hover: #916315;
+      --border-color: #e5dcbd;
+      --shadow-color: rgba(44, 37, 32, 0.08);
+      --viewer-bg: #141210; /* dark background for viewer */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Header */
+    header {
+      background-color: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      box-shadow: 0 2px 8px var(--shadow-color);
+    }
+
+    header h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .header-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Main Container */
+    .main-container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Viewer Panel (Left) */
+    .viewer-panel {
+      flex: 3;
+      background-color: var(--viewer-bg);
+      position: relative;
+      height: 100%;
+      box-shadow: inset -2px 0 10px rgba(0,0,0,0.2);
+    }
+
+    #openseadragon-viewer {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Custom OpenSeadragon Controls */
+    .osd-controls {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      display: flex;
+      gap: 10px;
+      z-index: 5;
+    }
+
+    .osd-btn {
+      background: rgba(28, 24, 21, 0.85);
+      border: 1px solid rgba(229, 220, 189, 0.25);
+      color: #faf8f5;
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(4px);
+    }
+
+    .osd-btn:hover {
+      background: var(--accent);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(179, 126, 34, 0.3);
+    }
+
+    /* Sidebar Panel (Right) */
+    .sidebar-panel {
+      flex: 2;
+      border-left: 1px solid var(--border-color);
+      background-color: var(--bg-secondary);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      max-width: 520px;
+      min-width: 380px;
+    }
+
+    /* Document Selector (for current and future letters) */
+    .selector-bar {
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .selector-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .custom-select {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      outline: none;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      transition: border-color 0.2s;
+    }
+
+    .custom-select:focus {
+      border-color: var(--accent);
+    }
+
+    /* Audio Player Card */
+    .audio-card {
+      margin: 1.25rem;
+      padding: 1.25rem;
+      background-color: var(--bg-primary);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 16px var(--shadow-color);
+    }
+
+    .audio-card-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Custom Audio Player Controls */
+    .custom-player {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .play-pause-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background-color: var(--accent);
+      border: none;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      box-shadow: 0 3px 10px rgba(179, 126, 34, 0.35);
+      flex-shrink: 0;
+    }
+
+    .play-pause-btn:hover {
+      background-color: var(--accent-hover);
+      transform: scale(1.05);
+    }
+
+    .player-progress-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .progress-timeline {
+      width: 100%;
+      height: 8px;
+      background-color: #ebdcb1;
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .progress-filled {
+      height: 100%;
+      background-color: var(--accent);
+      border-radius: 4px;
+      width: 0%;
+      position: relative;
+    }
+
+    .time-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    /* Tabs Area */
+    .tabs-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .tab-buttons {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+      background-color: var(--bg-secondary);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 1rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      position: relative;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      color: var(--text-primary);
+      background-color: var(--bg-primary);
+    }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background-color: var(--accent);
+    }
+
+    .tab-content-wrapper {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+      background-color: var(--bg-primary);
+      line-height: 1.7;
+    }
+
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Tab Content Styling */
+    .metadata-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.5rem;
+    }
+
+    .metadata-table td {
+      padding: 0.75rem 0;
+      border-bottom: 1px dashed var(--border-color);
+      font-size: 0.9rem;
+    }
+
+    .metadata-table td.label-cell {
+      font-weight: 600;
+      color: var(--text-secondary);
+      width: 35%;
+    }
+
+    .letter-text {
+      font-family: 'Georgia', serif;
+      font-size: 1.05rem;
+      white-space: pre-wrap;
+      color: var(--text-primary);
+      letter-spacing: 0.01em;
+    }
+
+    .historical-note {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      background-color: var(--bg-secondary);
+      padding: 1rem;
+      border-radius: 8px;
+      border-left: 3px solid var(--accent);
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hidden HTML5 Audio Element -->
+  <audio id="audio-element" src="letter-1/Letter1.mp3" preload="metadata"></audio>
+
+  <header>
+    <h1>Battani Family Archives</h1>
+    <div class="header-subtitle">Interactive Letter Viewer</div>
+  </header>
+
+  <div class="main-container">
+    
+    <!-- Deep Zoom Viewer Panel -->
+    <div class="viewer-panel">
+      <div id="openseadragon-viewer"></div>
+      
+      <!-- Custom Control Buttons overlaying OpenSeadragon -->
+      <div class="osd-controls">
+        <button id="osd-zoom-in" class="osd-btn" title="Zoom In">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+        </button>
+        <button id="osd-zoom-out" class="osd-btn" title="Zoom Out">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+        </button>
+        <button id="osd-home" class="osd-btn" title="Reset View">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Sidebar Panel -->
+    <div class="sidebar-panel">
+      
+      <!-- Dropdown selector to support adding more letters easily in the future -->
+      <div class="selector-bar">
+        <label class="selector-label" for="letter-select">Choose a Document</label>
+        <select class="custom-select" id="letter-select">
+          <option value="letter-1">Letter 1 (Korean War Era)</option>
+          <!-- Additional options can be added here as new letters are processed -->
+        </select>
+      </div>
+
+      <!-- Integrated Audio Player Card -->
+      <div class="audio-card">
+        <div class="audio-card-title">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+          Audio Reading
+        </div>
+        
+        <div class="custom-player">
+          <button class="play-pause-btn" id="play-pause-btn" title="Play">
+            <!-- Play icon by default -->
+            <svg id="play-icon" viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <!-- Pause icon hidden by default -->
+            <svg id="pause-icon" viewBox="0 0 24 24" width="26" height="26" fill="currentColor" style="display: none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          </button>
+          
+          <div class="player-progress-container">
+            <div class="progress-timeline" id="progress-timeline">
+              <div class="progress-filled" id="progress-filled"></div>
+            </div>
+            <div class="time-row">
+              <span id="current-time">0:00</span>
+              <span id="duration">0:00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs and Content area -->
+      <div class="tabs-container">
+        <div class="tab-buttons">
+          <button class="tab-btn active" data-tab="details">Details</button>
+          <button class="tab-btn" data-tab="transcription">Transcription</button>
+          <button class="tab-btn" data-tab="translation">English Translation</button>
+        </div>
+        
+        <div class="tab-content-wrapper">
+          
+          <!-- Tab 1: Details -->
+          <div class="tab-pane active" id="details">
+            <table class="metadata-table">
+              <tr>
+                <td class="label-cell">Sender</td>
+                <td id="meta-sender">Battani Family Member</td>
+              </tr>
+              <tr>
+                <td class="label-cell">Date</td>
+                <td id="meta-date">Circa 1950 - 1953</td>
+              </tr>
+              <tr>
+                <td class="label-cell">Context</td>
+                <td>Korean War Correspondence</td>
+              </tr>
+              <tr>
+                <td class="label-cell">Material</td>
+                <td>Paper Scan (Deep-Zoomable Image)</td>
+              </tr>
+            </table>
+            
+            <p style="margin-bottom: 1rem;">This letter belongs to the Battani Family historical letters collection. It provides a unique, first-hand look into the experiences and personal correspondence written during the Korean War.</p>
+            
+            <div class="historical-note">
+              <strong>Interactive Archive:</strong> You can zoom in and inspect the original paper texture, ink handwriting, and war stamps in high-resolution on the left, while listening to the audio recording using the player above.
+            </div>
+          </div>
+
+          <!-- Tab 2: Transcription (Editable) -->
+          <div class="tab-pane" id="transcription">
+            <!-- EDIT HERE: Paste the original transcription/text of the letter below -->
+            <div class="letter-text" id="letter-transcription">[Your original transcription of the letter goes here. You can edit index.html inside the repository to paste the text here so your family and visitors can read it while listening to the audio.]</div>
+          </div>
+
+          <!-- Tab 3: Translation (Editable) -->
+          <div class="tab-pane" id="translation">
+            <!-- EDIT HERE: Paste the English translation of the letter below -->
+            <div class="letter-text" id="letter-translation">[Your English translation of the letter goes here. You can edit index.html inside the repository to paste the text here.]</div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    // Initialize OpenSeadragon Viewer
+    let viewer = OpenSeadragon({
+      id: "openseadragon-viewer",
+      prefixUrl: "https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/images/",
+      tileSources: "letter-1/info.json", // Load our Level 0 info.json relatively
+      showNavigationControl: false, // Use our custom sepia-themed buttons instead
+      minZoomImageRatio: 0.8,
+      maxZoomPixelRatio: 3,
+      visibilityRatio: 1.0,
+      constrainDuringPan: true
+    });
+
+    // Custom OSD Navigation Bindings
+    document.getElementById('osd-zoom-in').addEventListener('click', () => {
+      viewer.viewport.zoomBy(1.3);
+      viewer.viewport.applyConstraints();
+    });
+
+    document.getElementById('osd-zoom-out').addEventListener('click', () => {
+      viewer.viewport.zoomBy(0.7);
+      viewer.viewport.applyConstraints();
+    });
+
+    document.getElementById('osd-home').addEventListener('click', () => {
+      viewer.viewport.goHome();
+      viewer.viewport.applyConstraints();
+    });
+
+    // Custom HTML5 Audio Player Logic
+    const audio = document.getElementById('audio-element');
+    const playPauseBtn = document.getElementById('play-pause-btn');
+    const playIcon = document.getElementById('play-icon');
+    const pauseIcon = document.getElementById('pause-icon');
+    const timeline = document.getElementById('progress-timeline');
+    const progressFilled = document.getElementById('progress-filled');
+    const currentTimeEl = document.getElementById('current-time');
+    const durationEl = document.getElementById('duration');
+
+    function formatTime(seconds) {
+      if (isNaN(seconds)) return "0:00";
+      const min = Math.floor(seconds / 60);
+      const sec = Math.floor(seconds % 60);
+      return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+    }
+
+    // Toggle Play/Pause
+    playPauseBtn.addEventListener('click', () => {
+      if (audio.paused) {
+        audio.play();
+        playIcon.style.display = 'none';
+        pauseIcon.style.display = 'block';
+      } else {
+        audio.pause();
+        playIcon.style.display = 'block';
+        pauseIcon.style.display = 'none';
+      }
+    });
+
+    // Update Progress Bar & Time text
+    audio.addEventListener('timeupdate', () => {
+      const percentage = (audio.currentTime / audio.duration) * 100;
+      progressFilled.style.width = `${percentage}%`;
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+    });
+
+    // Load Metadata to show duration
+    audio.addEventListener('loadedmetadata', () => {
+      durationEl.textContent = formatTime(audio.duration);
+    });
+
+    // Seek on progress timeline click
+    timeline.addEventListener('click', (e) => {
+      const timelineWidth = window.getComputedStyle(timeline).width;
+      const timeToSeek = (e.offsetX / parseInt(timelineWidth)) * audio.duration;
+      audio.currentTime = timeToSeek;
+    });
+
+    // Handle audio completion
+    audio.addEventListener('ended', () => {
+      playIcon.style.display = 'block';
+      pauseIcon.style.display = 'none';
+      progressFilled.style.width = '0%';
+      currentTimeEl.textContent = "0:00";
+    });
+
+    // Tab Switching Logic
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Deactivate all
+        tabButtons.forEach(b => b.classList.remove('active'));
+        tabPanes.forEach(p => p.classList.remove('active'));
+
+        // Activate clicked
+        btn.classList.add('active');
+        const tabId = btn.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+
+    // Selector Dropdown Logic (for future letter expandability)
+    const letterSelect = document.getElementById('letter-select');
+    letterSelect.addEventListener('change', (e) => {
+      const selectedValue = e.target.value;
+      
+      // Update image viewer source
+      viewer.open(`${selectedValue}/info.json`);
+      
+      // Update audio source
+      audio.src = `${selectedValue}/Letter1.mp3`; // Assuming matching file name format
+      audio.load();
+      
+      // Reset play/pause state
+      playIcon.style.display = 'block';
+      pauseIcon.style.display = 'none';
+      progressFilled.style.width = '0%';
+      currentTimeEl.textContent = "0:00";
+
+      // Reset viewer to home zoom
+      viewer.viewport.goHome();
+    });
+  </script>
+</body>
+</html>

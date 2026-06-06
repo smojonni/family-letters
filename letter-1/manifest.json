@@ -1,12 +1,12 @@
 {
   "@context": "http://iiif.io/api/presentation/2/context.json",
-  "@id": "https://smojonni.github.io/family-letters/letter-1/manifest.json",
+  "@id": "https://battanihistory.com/letter-1/manifest.json",
   "@type": "sc:Manifest",
   "label": "Letter 1",
   "description": "IIIF presentation of Letter 1",
   "attribution": "Hosted by smojonni on GitHub Pages",
   "thumbnail": {
-    "@id": "https://smojonni.github.io/family-letters/letter-1/full/325,/0/default.jpg",
+    "@id": "https://battanihistory.com/letter-1/full/325,/0/default.jpg",
     "@type": "dctypes:Image",
     "format": "image/jpeg",
     "width": 325,
@@ -14,18 +14,18 @@
   },
   "sequences": [
     {
-      "@id": "https://smojonni.github.io/family-letters/letter-1/sequence/normal",
+      "@id": "https://battanihistory.com/letter-1/sequence/normal",
       "@type": "sc:Sequence",
       "label": "Current Page Order",
       "canvases": [
         {
-          "@id": "https://smojonni.github.io/family-letters/letter-1/canvas/p1",
+          "@id": "https://battanihistory.com/letter-1/canvas/p1",
           "@type": "sc:Canvas",
           "label": "Page 1",
           "width": 2600,
           "height": 9210,
           "thumbnail": {
-            "@id": "https://smojonni.github.io/family-letters/letter-1/full/325,/0/default.jpg",
+            "@id": "https://battanihistory.com/letter-1/full/325,/0/default.jpg",
             "@type": "dctypes:Image",
             "format": "image/jpeg",
             "width": 325,
@@ -33,19 +33,19 @@
           },
           "images": [
             {
-              "@id": "https://smojonni.github.io/family-letters/letter-1/annotation/p1-image",
+              "@id": "https://battanihistory.com/letter-1/annotation/p1-image",
               "@type": "oa:Annotation",
               "motivation": "sc:painting",
-              "on": "https://smojonni.github.io/family-letters/letter-1/canvas/p1",
+              "on": "https://battanihistory.com/letter-1/canvas/p1",
               "resource": {
-                "@id": "https://smojonni.github.io/family-letters/letter-1/full/max/0/default.jpg",
+                "@id": "https://battanihistory.com/letter-1/full/max/0/default.jpg",
                 "@type": "dctypes:Image",
                 "format": "image/jpeg",
                 "width": 2600,
                 "height": 9210,
                 "service": {
                   "@context": "http://iiif.io/api/image/2/context.json",
-                  "@id": "https://smojonni.github.io/family-letters/letter-1",
+                  "@id": "https://battanihistory.com/letter-1",
                   "profile": "http://iiif.io/api/image/2/level0.json",
                   "width": 2600,
                   "height": 9210,

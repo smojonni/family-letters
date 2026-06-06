@@ -3,6 +3,15 @@
   "@id": "https://smojonni.github.io/family-letters/letter-1/manifest.json",
   "@type": "sc:Manifest",
   "label": "Letter 1",
+  "description": "IIIF presentation of Letter 1",
+  "attribution": "Hosted by smojonni on GitHub Pages",
+  "thumbnail": {
+    "@id": "https://smojonni.github.io/family-letters/letter-1/full/325,/0/default.jpg",
+    "@type": "dctypes:Image",
+    "format": "image/jpeg",
+    "width": 325,
+    "height": 1152
+  },
   "sequences": [
     {
       "@id": "https://smojonni.github.io/family-letters/letter-1/sequence/normal",
@@ -15,6 +24,13 @@
           "label": "Page 1",
           "width": 2600,
           "height": 9210,
+          "thumbnail": {
+            "@id": "https://smojonni.github.io/family-letters/letter-1/full/325,/0/default.jpg",
+            "@type": "dctypes:Image",
+            "format": "image/jpeg",
+            "width": 325,
+            "height": 1152
+          },
           "images": [
             {
               "@id": "https://smojonni.github.io/family-letters/letter-1/annotation/p1-image",
@@ -30,7 +46,54 @@
                 "service": {
                   "@context": "http://iiif.io/api/image/2/context.json",
                   "@id": "https://smojonni.github.io/family-letters/letter-1",
-                  "profile": "http://iiif.io/api/image/2/level0.json"
+                  "profile": "http://iiif.io/api/image/2/level0.json",
+                  "width": 2600,
+                  "height": 9210,
+                  "sizes": [
+                    {
+                      "width": 41,
+                      "height": 144
+                    },
+                    {
+                      "width": 82,
+                      "height": 288
+                    },
+                    {
+                      "width": 163,
+                      "height": 576
+                    },
+                    {
+                      "width": 325,
+                      "height": 1152
+                    },
+                    {
+                      "width": 650,
+                      "height": 2303
+                    },
+                    {
+                      "width": 1300,
+                      "height": 4605
+                    },
+                    {
+                      "width": 2600,
+                      "height": 9210
+                    }
+                  ],
+                  "tiles": [
+                    {
+                      "width": 256,
+                      "height": 256,
+                      "scaleFactors": [
+                        1,
+                        2,
+                        4,
+                        8,
+                        16,
+                        32,
+                        64
+                      ]
+                    }
+                  ]
                 }
               }
             }

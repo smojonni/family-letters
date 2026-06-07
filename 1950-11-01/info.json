@@ -1,0 +1,63 @@
+{
+  "@context": "http://iiif.io/api/image/2/context.json",
+  "@id": "/1950-11-01",
+  "protocol": "http://iiif.io/api/image",
+  "width": 2442,
+  "height": 9529,
+  "sizes": [
+    {
+      "width": 39,
+      "height": 149
+    },
+    {
+      "width": 77,
+      "height": 298
+    },
+    {
+      "width": 153,
+      "height": 596
+    },
+    {
+      "width": 306,
+      "height": 1192
+    },
+    {
+      "width": 611,
+      "height": 2383
+    },
+    {
+      "width": 1221,
+      "height": 4765
+    },
+    {
+      "width": 2442,
+      "height": 9529
+    }
+  ],
+  "tiles": [
+    {
+      "width": 256,
+      "height": 256,
+      "scaleFactors": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64
+      ]
+    }
+  ],
+  "profile": [
+    "http://iiif.io/api/image/2/level0.json",
+    {
+      "formats": [
+        "jpg"
+      ],
+      "qualities": [
+        "default"
+      ]
+    }
+  ]
+}

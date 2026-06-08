@@ -1,2 +1,5 @@
 index.html.src
 .DS_Store
+
+# Ignore all date-based letter directories
+1950-*/

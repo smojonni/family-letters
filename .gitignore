@@ -4,3 +4,9 @@ index.html.src
 # Ignore all date-based letter directories
 1950-*/
 1951-*/
+
+# Ignore Python virtual environments and caches
+.venv/
+PIL/
+__pycache__/
+*.pyc

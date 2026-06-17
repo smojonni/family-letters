@@ -177,13 +177,15 @@
     });
 
     // Auto-unlock on load if password exists in localStorage
-    try {
-      const savedPw = localStorage.getItem('letters_archive_password');
-      if (savedPw) {
-        document.getElementById('pw-input').value = savedPw;
-        unlock();
-      }
-    } catch(e) {}
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        const savedPw = localStorage.getItem('letters_archive_password');
+        if (savedPw) {
+          document.getElementById('pw-input').value = savedPw;
+          unlock();
+        }
+      } catch(e) {}
+    });
   </script>
 </body>
 </html>

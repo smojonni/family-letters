@@ -149,6 +149,9 @@
           if (window.gtag) {
             gtag('event', 'unlock_success');
           }
+          try {
+            localStorage.setItem('letters_archive_password', pw);
+          } catch(e) {}
           document.open();
           document.write(decrypted);
           document.close();
@@ -161,6 +164,9 @@
     }
     
     function showError() {
+      try {
+        localStorage.removeItem('letters_archive_password');
+      } catch(e) {}
       document.getElementById('error-msg').style.display = 'block';
       document.getElementById('pw-input').value = '';
     }
@@ -169,6 +175,15 @@
     document.getElementById('pw-input').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') unlock();
     });
+
+    // Auto-unlock on load if password exists in localStorage
+    try {
+      const savedPw = localStorage.getItem('letters_archive_password');
+      if (savedPw) {
+        document.getElementById('pw-input').value = savedPw;
+        unlock();
+      }
+    } catch(e) {}
   </script>
 </body>
 </html>

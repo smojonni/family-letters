@@ -460,7 +460,7 @@
       display: flex;
       flex-direction: column;
       overflow-y: auto;
-      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
     }
 
     .transcript-section {
@@ -1448,40 +1448,179 @@
       viewer.viewport.goHome(true);
     });
 
-    // Intercept scroll wheel events to scroll/pan vertically instead of zooming
+    // Helper to check if current view has an active transcript above the viewer
+    function getTranscriptScrollContext() {
+      const scrollContainer = document.getElementById('detail-scroll-container');
+      const transcriptSection = document.getElementById('transcript-section');
+      const hasTranscript = Boolean(scrollContainer && transcriptSection && transcriptSection.style.display !== 'none');
+      return {
+        hasTranscript,
+        scrollContainer,
+        transcriptSection,
+        transcriptHeight: hasTranscript ? transcriptSection.offsetHeight : 0
+      };
+    }
+
+    // Clamp OpenSeadragon top edge to homeBounds.y when transcript is present
+    function clampViewerToTopEdge(topY) {
+      const bounds = viewer.viewport.getBounds(true);
+      const center = viewer.viewport.getCenter(true);
+      const targetCenterY = topY + bounds.height / 2;
+      viewer.viewport.panTo(new OpenSeadragon.Point(center.x, targetCenterY), true);
+    }
+
+    // Intercept scroll wheel / trackpad events to scroll seamlessly between transcript and letter scan
     viewer.addHandler('canvas-scroll', function(event) {
       if (event.originalEvent.ctrlKey || event.originalEvent.metaKey) {
         return; // default zoom behavior on pinch / ctrl-wheel
       }
       
-      const scrollContainer = document.getElementById('detail-scroll-container');
-      const transcriptSection = document.getElementById('transcript-section');
-      const hasTranscript = transcriptSection && transcriptSection.style.display !== 'none';
+      event.preventDefaultAction = true;
+      const { hasTranscript, scrollContainer, transcriptHeight } = getTranscriptScrollContext();
+      var scrollDelta = -event.scroll * 0.06;
 
-      if (hasTranscript && scrollContainer) {
-        const transcriptHeight = transcriptSection.offsetHeight;
-        // If scrolling down while transcript is still visible above the viewer, scroll the outer container first
-        if (event.scroll < 0 && scrollContainer.scrollTop < transcriptHeight - 4) {
-          event.preventDefaultAction = true;
-          scrollContainer.scrollBy({ top: -event.scroll * 60, behavior: 'auto' });
+      if (hasTranscript) {
+        const homeBounds = viewer.viewport.getHomeBounds();
+        const topY = homeBounds.y;
+        const bounds = viewer.viewport.getBounds(true);
+
+        // 1. Scrolling down while transcript is still visible above the viewer
+        if (scrollDelta > 0 && scrollContainer.scrollTop < transcriptHeight - 2) {
+          scrollContainer.scrollTop = Math.min(transcriptHeight, scrollContainer.scrollTop + scrollDelta * 900);
           return;
         }
-        // If scrolling up and the viewer is already at the top of the letter scan, scroll back up to the transcript
-        if (event.scroll > 0 && scrollContainer.scrollTop > 0) {
-          const bounds = viewer.viewport.getBounds();
-          const homeBounds = viewer.viewport.getHomeBounds();
-          if (bounds.y <= homeBounds.y + 0.02) {
-            event.preventDefaultAction = true;
-            scrollContainer.scrollBy({ top: -event.scroll * 60, behavior: 'auto' });
+
+        // 2. Scrolling up when at (or reaching) the top of the letter scan -> scroll back up into transcript
+        if (scrollDelta < 0) {
+          if (bounds.y + scrollDelta <= topY + 0.002) {
+            if (bounds.y > topY) {
+              clampViewerToTopEdge(topY);
+            }
+            if (scrollContainer.scrollTop > 0) {
+              scrollContainer.scrollTop = Math.max(0, scrollContainer.scrollTop + scrollDelta * 900);
+            }
             return;
           }
         }
       }
 
-      event.preventDefaultAction = true;
-      var scrollDelta = -event.scroll * 0.06;
       viewer.viewport.panBy(new OpenSeadragon.Point(0, scrollDelta));
       viewer.viewport.applyConstraints();
+    });
+
+    // Touch / pointer drag handoff so touchscreen swipes transition seamlessly back and forth between transcript and letter
+    let touchDragVelocityY = 0;
+    let touchMomentumFrame = null;
+    let isScrollingOuterFromDrag = false;
+
+    function stopTouchMomentum() {
+      if (touchMomentumFrame) {
+        cancelAnimationFrame(touchMomentumFrame);
+        touchMomentumFrame = null;
+      }
+      touchDragVelocityY = 0;
+    }
+
+    viewer.addHandler('canvas-press', function() {
+      stopTouchMomentum();
+      isScrollingOuterFromDrag = false;
+    });
+
+    viewer.addHandler('canvas-drag', function(event) {
+      // Allow multi-touch pinch zoom to work normally
+      if (event.originalEvent && event.originalEvent.touches && event.originalEvent.touches.length > 1) {
+        return;
+      }
+
+      const { hasTranscript, scrollContainer, transcriptHeight } = getTranscriptScrollContext();
+      if (!hasTranscript || !event.delta) return;
+
+      const dy = event.delta.y; // dy < 0: dragging finger up (scrolling down page); dy > 0: dragging finger down (scrolling up page)
+      const homeBounds = viewer.viewport.getHomeBounds();
+      const topY = homeBounds.y;
+      const bounds = viewer.viewport.getBounds(true);
+      const deltaViewport = viewer.viewport.deltaPointsFromPixels(event.delta, true);
+      const nextBoundsY = bounds.y - deltaViewport.y;
+
+      // Case 1: Swiping up (scrolling down) while transcript is still visible on screen
+      if (dy < 0 && scrollContainer.scrollTop < transcriptHeight - 1) {
+        event.preventDefaultAction = true;
+        scrollContainer.scrollTop = Math.min(transcriptHeight, scrollContainer.scrollTop - dy);
+        touchDragVelocityY = dy;
+        isScrollingOuterFromDrag = true;
+        return;
+      }
+
+      // Case 2: Swiping down (scrolling up toward transcript) when letter scan is at or reaching its top edge
+      if (dy > 0 && nextBoundsY <= topY + 0.002) {
+        event.preventDefaultAction = true;
+        let remainingPx = dy;
+        if (bounds.y > topY) {
+          const usedViewportY = bounds.y - topY;
+          const usedPx = viewer.viewport.deltaPixelsFromPoints(new OpenSeadragon.Point(0, usedViewportY), true).y;
+          remainingPx = Math.max(0, dy - usedPx);
+          clampViewerToTopEdge(topY);
+        } else {
+          clampViewerToTopEdge(topY);
+        }
+        if (scrollContainer.scrollTop > 0 && remainingPx > 0) {
+          scrollContainer.scrollTop = Math.max(0, scrollContainer.scrollTop - remainingPx);
+        }
+        touchDragVelocityY = dy;
+        isScrollingOuterFromDrag = true;
+        return;
+      }
+
+      isScrollingOuterFromDrag = false;
+      touchDragVelocityY = dy;
+    });
+
+    viewer.addHandler('canvas-drag-end', function() {
+      const { hasTranscript, scrollContainer, transcriptHeight } = getTranscriptScrollContext();
+      if (!hasTranscript || !isScrollingOuterFromDrag || Math.abs(touchDragVelocityY) < 2) {
+        return;
+      }
+      let vy = touchDragVelocityY * 1.15;
+      function stepMomentum() {
+        if (Math.abs(vy) < 0.8) {
+          touchMomentumFrame = null;
+          return;
+        }
+        const prev = scrollContainer.scrollTop;
+        scrollContainer.scrollTop = Math.max(0, Math.min(transcriptHeight, prev - vy));
+        // If momentum scrolled down past the transcript into the viewer, transfer remaining momentum to OpenSeadragon
+        if (vy < 0 && scrollContainer.scrollTop >= transcriptHeight - 1) {
+          const panViewport = viewer.viewport.deltaPointsFromPixels(new OpenSeadragon.Point(0, -vy), true);
+          viewer.viewport.panBy(new OpenSeadragon.Point(0, panViewport.y));
+          viewer.viewport.applyConstraints();
+          touchMomentumFrame = null;
+          return;
+        }
+        if (scrollContainer.scrollTop === 0 && vy > 0) {
+          touchMomentumFrame = null;
+          return;
+        }
+        vy *= 0.92;
+        touchMomentumFrame = requestAnimationFrame(stepMomentum);
+      }
+      touchMomentumFrame = requestAnimationFrame(stepMomentum);
+    });
+
+    // If OpenSeadragon's internal pan animation ever overshoots above the top of the letter scan, clamp it and scroll up into transcript
+    viewer.addHandler('animation', function() {
+      const { hasTranscript, scrollContainer } = getTranscriptScrollContext();
+      if (!hasTranscript) return;
+      const homeBounds = viewer.viewport.getHomeBounds();
+      const topY = homeBounds.y;
+      const currentBounds = viewer.viewport.getBounds(true);
+      if (currentBounds.y < topY - 0.001) {
+        const overshootViewportY = topY - currentBounds.y;
+        const overshootPx = viewer.viewport.deltaPixelsFromPoints(new OpenSeadragon.Point(0, overshootViewportY), true).y;
+        clampViewerToTopEdge(topY);
+        if (scrollContainer.scrollTop > 0 && overshootPx > 0) {
+          scrollContainer.scrollTop = Math.max(0, scrollContainer.scrollTop - overshootPx);
+        }
+      }
     });
 
     document.getElementById('osd-back-to-transcript').addEventListener('click', () => {

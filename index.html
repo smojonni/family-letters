@@ -452,13 +452,155 @@
       color: var(--text-secondary);
     }
 
-    /* Content Area - OSD Viewer */
+    /* Content Area - OSD Viewer & Transcript */
+    .detail-scroll-container {
+      flex: 1;
+      width: 100%;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+
+    .transcript-section {
+      background-color: var(--bg-primary);
+      border-bottom: 2px solid var(--border-color);
+      padding: 2rem 1.5rem 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .transcript-card {
+      max-width: 760px;
+      margin: 0 auto;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem 2.2rem;
+      box-shadow: 0 4px 14px var(--shadow-color);
+      color: var(--text-primary);
+    }
+
+    .transcript-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.9rem;
+      margin-bottom: 1.4rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .transcript-header h3 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.3rem;
+      color: var(--text-primary);
+    }
+
+    .jump-to-scan-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 0.4rem 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .jump-to-scan-btn:hover {
+      background-color: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .transcript-envelope {
+      background-color: var(--bg-primary);
+      border: 1px dashed var(--border-color);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.88rem;
+      line-height: 1.55;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .transcript-envelope-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 0.25rem;
+    }
+
+    .transcript-envelope-postmark {
+      grid-column: 1 / -1;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border-color);
+      padding-top: 0.6rem;
+    }
+
+    .transcript-letter-body {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 1.08rem;
+      line-height: 1.8;
+      color: var(--text-primary);
+    }
+
+    .transcript-heading {
+      text-align: right;
+      margin-bottom: 1rem;
+      white-space: pre-line;
+    }
+
+    .transcript-salutation {
+      margin-bottom: 1rem;
+    }
+
+    .transcript-paragraph {
+      margin-bottom: 1rem;
+      text-indent: 1.5rem;
+    }
+
+    .transcript-closing {
+      text-align: right;
+      margin-top: 1.25rem;
+      white-space: pre-line;
+    }
+
+    .transcript-scroll-cue {
+      max-width: 760px;
+      margin: 1.2rem auto 0;
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
     .viewer-container {
       flex: 1;
       background-color: var(--viewer-bg);
       position: relative;
       width: 100%;
       min-height: 0;
+    }
+
+    .viewer-container.with-transcript {
+      flex: none;
+      height: calc(100dvh - 62px);
+      min-height: 520px;
     }
 
     #openseadragon-viewer {
@@ -526,6 +668,15 @@
       .osd-controls {
         bottom: 16px;
         right: 16px;
+      }
+      .transcript-section {
+        padding: 1.2rem 1rem;
+      }
+      .transcript-card {
+        padding: 1.3rem 1.2rem;
+      }
+      .transcript-envelope {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -665,20 +816,27 @@
       </div>
     </header>
     
-    <div class="viewer-container">
-      <div id="openseadragon-viewer"></div>
-      
-      <!-- OSD controls overlay -->
-      <div class="osd-controls">
-        <button id="osd-zoom-in" class="osd-btn" title="Zoom In">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
-        </button>
-        <button id="osd-zoom-out" class="osd-btn" title="Zoom Out">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
-        </button>
-        <button id="osd-home" class="osd-btn" title="Reset View">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-        </button>
+    <div id="detail-scroll-container" class="detail-scroll-container">
+      <div id="transcript-section" class="transcript-section" style="display: none;"></div>
+
+      <div id="viewer-container" class="viewer-container">
+        <div id="openseadragon-viewer"></div>
+        
+        <!-- OSD controls overlay -->
+        <div class="osd-controls">
+          <button id="osd-back-to-transcript" class="osd-btn" title="Back to Transcript" style="display: none;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+          </button>
+          <button id="osd-zoom-in" class="osd-btn" title="Zoom In">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+          </button>
+          <button id="osd-zoom-out" class="osd-btn" title="Zoom Out">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+          </button>
+          <button id="osd-home" class="osd-btn" title="Reset View">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -1202,7 +1360,21 @@
                 {
                   id: "1942-08-16",
                   date: "August 16, 1942",
-                  tileSource: "1942-08-16/info.json"
+                  tileSource: "1942-08-16/info.json",
+                  audioSource: "1942-08-16/1942-08-16.mp3",
+                  transcript: {
+                    envelope: {
+                      returnAddress: "Pvt. George L. Battani\nPlt. 659 R.D., M.C.B.,\nSan Diego, Calif.",
+                      postmark: "SAN DIEGO, CALIF. — AUG 17, 12:30 PM, 1942 (MARINE CORPS BASE) — Free",
+                      recipient: "Mr. Adolpho Battani\nMadrid, Iowa\nR.R. 1."
+                    },
+                    heading: "August 16, 1942\nSan Daiego [San Diego], Calif.",
+                    salutation: "Hello Folks:",
+                    body: [
+                      "Arrived in San Daiego [San Diego] Sunday morning about 4:30. Had a swell train trip. I am O.K. and hope everyone is well at home. Hows daddy. We went through our physical today & got some shots. The [There] was better than 200 of us here from all over the country. The feed is good & plenty of it. Hows Girt. How did the wedding pictures come out. Swell I hope. don't send one out. We didn't get to go to church today because we was busy. We'll have to get up about 5 oclock in the morning. From Los Angelos [Los Angeles] we took a bus out to San Diego. There are pretty good guys in our outfit. Don't send no candy or anything like that out here because they don't want you to."
+                    ],
+                    closing: "with love\nGeorge"
+                  }
                 }
               ]
             },
@@ -1282,10 +1454,41 @@
         return; // default zoom behavior on pinch / ctrl-wheel
       }
       
+      const scrollContainer = document.getElementById('detail-scroll-container');
+      const transcriptSection = document.getElementById('transcript-section');
+      const hasTranscript = transcriptSection && transcriptSection.style.display !== 'none';
+
+      if (hasTranscript && scrollContainer) {
+        const transcriptHeight = transcriptSection.offsetHeight;
+        // If scrolling down while transcript is still visible above the viewer, scroll the outer container first
+        if (event.scroll < 0 && scrollContainer.scrollTop < transcriptHeight - 4) {
+          event.preventDefaultAction = true;
+          scrollContainer.scrollBy({ top: -event.scroll * 60, behavior: 'auto' });
+          return;
+        }
+        // If scrolling up and the viewer is already at the top of the letter scan, scroll back up to the transcript
+        if (event.scroll > 0 && scrollContainer.scrollTop > 0) {
+          const bounds = viewer.viewport.getBounds();
+          const homeBounds = viewer.viewport.getHomeBounds();
+          if (bounds.y <= homeBounds.y + 0.02) {
+            event.preventDefaultAction = true;
+            scrollContainer.scrollBy({ top: -event.scroll * 60, behavior: 'auto' });
+            return;
+          }
+        }
+      }
+
       event.preventDefaultAction = true;
       var scrollDelta = -event.scroll * 0.06;
       viewer.viewport.panBy(new OpenSeadragon.Point(0, scrollDelta));
       viewer.viewport.applyConstraints();
+    });
+
+    document.getElementById('osd-back-to-transcript').addEventListener('click', () => {
+      const scrollContainer = document.getElementById('detail-scroll-container');
+      if (scrollContainer) {
+        scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     });
 
     // OSD controls bindings
@@ -1723,6 +1926,64 @@
       }
       
       document.getElementById('view-letter-detail').classList.add('active');
+
+      // Render Transcript Section if available
+      const scrollContainer = document.getElementById('detail-scroll-container');
+      const transcriptSection = document.getElementById('transcript-section');
+      const viewerContainer = document.getElementById('viewer-container');
+      const backToTranscriptBtn = document.getElementById('osd-back-to-transcript');
+
+      if (letter.transcript) {
+        const t = letter.transcript;
+        let envelopeHtml = '';
+        if (t.envelope) {
+          envelopeHtml = `
+            <div class="transcript-envelope">
+              <div>
+                <div class="transcript-envelope-label">Return Address</div>
+                <div style="white-space: pre-line;">${t.envelope.returnAddress || ''}</div>
+              </div>
+              <div>
+                <div class="transcript-envelope-label">Addressed To</div>
+                <div style="white-space: pre-line;">${t.envelope.recipient || ''}</div>
+              </div>
+              ${t.envelope.postmark ? `<div class="transcript-envelope-postmark"><strong>Postmark:</strong> ${t.envelope.postmark}</div>` : ''}
+            </div>
+          `;
+        }
+        const bodyHtml = (t.body || []).map(p => `<p class="transcript-paragraph">${p}</p>`).join('');
+        transcriptSection.innerHTML = `
+          <div class="transcript-card">
+            <div class="transcript-header">
+              <h3>Letter Transcript — ${letter.date}</h3>
+              <button type="button" class="jump-to-scan-btn" onclick="document.getElementById('viewer-container').scrollIntoView({ behavior: 'smooth' })">
+                <span>Jump to Handwritten Letter</span>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+              </button>
+            </div>
+            ${envelopeHtml}
+            <div class="transcript-letter-body">
+              ${t.heading ? `<div class="transcript-heading">${t.heading}</div>` : ''}
+              ${t.salutation ? `<div class="transcript-salutation">${t.salutation}</div>` : ''}
+              ${bodyHtml}
+              ${t.closing ? `<div class="transcript-closing">${t.closing}</div>` : ''}
+            </div>
+          </div>
+          <div class="transcript-scroll-cue">↓ Scroll down to view the original handwritten letter ↓</div>
+        `;
+        transcriptSection.style.display = 'block';
+        viewerContainer.classList.add('with-transcript');
+        if (backToTranscriptBtn) backToTranscriptBtn.style.display = 'flex';
+      } else {
+        transcriptSection.innerHTML = '';
+        transcriptSection.style.display = 'none';
+        viewerContainer.classList.remove('with-transcript');
+        if (backToTranscriptBtn) backToTranscriptBtn.style.display = 'none';
+      }
+
+      if (scrollContainer) {
+        scrollContainer.scrollTop = 0;
+      }
       
       // Load tiles in OpenSeadragon
       const viewerEl = document.getElementById('openseadragon-viewer');
